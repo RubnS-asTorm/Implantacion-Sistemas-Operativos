@@ -1,0 +1,7 @@
+fdisk -l
+nano /etc/fstab
+mount -a
+systemctl daemon-reload
+mount
+reboot
+df -h
