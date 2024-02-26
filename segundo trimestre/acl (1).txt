@@ -1,0 +1,208 @@
+*******************ACL********************                                                                                                     
+------------------------------------------------------------------------------------------------------------
+apt-get install acl
+getfacl [R] mostrar acl
+setfacl asigna las alc [-R(resursivo), -m (añadir una o modificar), 
+-d(heredable, si creo otro directorio despues añade las acl)]
+setfacl -m g:(nombre grupo)grupo1:rwx(permisos q quiero dar) dir1
+stfacl -m -d g:grupo1:rwx dir1 (asi todo lo que cree despues hereda permisos)
+setfacl -x g:grupo1:rwx dir1 (asi se borra)
+	-k (borra entradas heredables)
+	-d (modifica q afecta las entradas heredables)
+
+
+#Creo un grupo gprueba
+addgroup gprueba
+
+#creo dos usuarios pruebau1 y pruebau2
+adduser pruebau1
+	pruebau2
+
+#añando usuario al grupo
+
+usermod -a -G gprueba pruebau1
+
+#Tengo el directorio comun en home.
+
+#asigno acl
+
+setfacl -m g:gprueba:rx /home/comun/
+
+#compruebo las acl
+
+getfacl -R /home/comun/
+
+#creamos otro directorio en comun
+mkdir /home/comun/exames
+#Con ls -ld comprobamos los permisos
+#Debe tener como minimo la misma restriccion en ugo para que las acl funcionen
+#asignamos mas acl
+setfacl -dm g:gprueba /home/comun/
+#Antes no tenia permisos heredables, por lo que si creabamos algo no recibia la acl, ahora al hacerlo vemos que si
+mkdir /home/comun/practicas
+#Damos permisos con chmod para que esten iguales
+chmod 750 /home/comun/practicas
+
+#comprobamos acl
+getfacl
+
+#Iniciamos sesion con el usuario pruebau1 y comprobamos que en /home/exames no nos deja entrar, pero en home/practicas si,
+
+#Despues borramos las acl (asi se borran todos) (si usamos -dx borramos tambien los heredables)
+setfacl -x g:gprueba /home/comun/
+
+#si queremos borrar uno en concreto seria
+
+setfacl -x g:prueba:rx /home/comun/
+-------------------------------------------------------------------------------------------------------------------
+********************Usuarios***********************
+-------------------------------------------------------------------------------------------------------------------
+#Creacion por comandos
+--------------------------------------------------------------------
+nano /etc/passwd y ponemos nuestro usuario en la ultima linea: pedrois:x:1001:1006:pedro iglesias:/home/pedrois:/bin/bash
+#editamos el shadow copiando el de el usuario root por ejemplo
+nano /etc/shadow copiamos el de root y lo pegamos cambiando el root inicial por nuestro usuario
+#creamos el grupo para nuestro usuario
+nano /etc/group pedrois:x:1005:
+#creamos el directorio de nuestro usuario
+mkdir /home/pedrois
+#copiamos los archivos de perfil al nuestro
+cp /etc/skel/.* /home/pedrois
+#cambiamos el propietario  
+chown pedrois:pedrois(grupo) /home/pedrois
+#Nos logeamos con el usuario y cambiamos la contraseña
+------------------------------------------------------------------------------
+#Creacion con adduser y useradd
+------------------------------------------------------------------------------
+# Si creamos el usuario con el comando adduser, nos creara el usuario automaticamente y lo unico que tendremos que configurar es la contraseña.
+# Tenemos tambien el comando useradd, el que si ejecutamos solo con el nombre del usuario, solo nos creara el grupo, pero para crearlo configurado podemos darle valores en la linea de comando.
+user. Con -m crearemos el directorio home del usuario, con menos -G el grupo principal, con -g el grupo secundario, con -k copiaremos los archivos de skel, con -p podremos añadir la contraseña, y con -s el shell (/bin/bash).
+
+
+
+-------------------------------------------------------------------------------
+#Modificacion de la clave
+-------------------------------------------------------------------------------
+#Para mirar la informacion del usuario
+nano /etc/shadow
+#Para modificar la clave de un usuario
+passwd -x 30 pedrois (la contraseña habra que cambiarla en 30 dias)
+#Para modificar el numero de dias que deben pasar entre cambios de contraseña
+passwd -n 3 pedrois
+#Para configurar  el aviso de caducidad de la contraseña
+passwd -w 3 pedrois
+#Dias para que la cuenta quede inactiva una vez caduque la contraseña
+passwd -i 5 pedrois
+#Para borrar la contraseña
+passwd -d pedrois
+#Para bloquear y desbloquear la contraseña
+passwd -l pedrois     |  passwd -u pedrois
+#Forzar que expire la contraseña
+passwd -e pedrois
+
+
+----------------------------------------------------------------------------------------
+*************************Cuotas****************************
+----------------------------------------------------------------------------------------
+
+#Comenzamos con installar el paquete quota
+apt-get install quota
+
+#Primero desmontaremos la carpeta donde vayamos a trabajar, en este casa /home y montamos la particion donde haremos las cuotas
+
+umount /home
+tune2fs -O quota /dev/sda6
+mount -a
+
+#Despues activamos las cuotas
+quotaon -va
+
+#Una vez tenemos la creacion de cuotas lista, comenzamos con la asignacion de las misma
+
+#comprobamos el estado de quota de nuestro usuario
+quota pedrois | repquota -va (para ver todos los usuarios)
+#Asignar cuotas (lo mas comodo es con edquota(editor) tambien podemos con setquota y linea de comando)
+
+edquota pedrois y en el editor cambiamos los limites soft y hard
+
+#Despues desde el usuario al cual le asignamos las cuotas probamos a crear archivos
+
+dd if=/dev/zero of=fichero bs=30M count=1
+
+#Cambiar el tiempo de gracia (se nos abre el editor y cambiamos los dias)
+edquota -t
+
+
+-------------------------------------------------------------------------------------
+cuotas de grupo
+-------------------------------------------------------------------------------------
+#creamos dos usuarios
+adduser login1
+	login2
+#creamos un grupo
+groupadd cuotas
+
+#añadimos los usuarios al grupo
+usermod -G(grupo principal) cuotas login1
+				   login2
+#Asignamos las cuotas de grupo
+edquota -g cuotas
+
+#Comprobamos las cuotas de grupo
+repquota -gva	
+#Para borrar una cuota de usuario o grupo se le asignan valores 0
+
+
+--------------------------------------------------------------------------------
+*************************sudo*********************
+--------------------------------------------------------------------------------
+#Instalamos el paquete sudo
+apt-get install sudo
+#creamos 4 usuario
+adduser sudo1
+	sudo2
+	sudo3
+	sudo4
+#Añadimos el usuario sudo1 al grupo sudo
+usermod -G sudo sudo1
+#Consultamos el el grupo al que pertenece sudo1
+id sudo1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
