@@ -1,0 +1,108 @@
+SO WINDOWS (ACL's)
+	L-> NTFS (FS)-> 13 Permisos =/ 's 
+			           T
+I----------------------------------------------------I
+I GESTION SO ----> 1 -> perfiles ("por departamentos")
+I 		  2 -> permisos a cada perfil
+I		  3 -> invitar a USUARIOS
+I
+L----> uso acl's ( acceder a recursos: carpetas red, impresoras, internet, .... )
+
+	-> herencia ( conflictos )
+	-> activar servicio acl's
+		-> full control (1)
+		-> atributos -> Read (1)
+			   -> Write (1)
+		-> atributos extendidos -> Read (1)
+				      -> Write (1)
+		-> files -> create (1)
+		          -> execute (1)
+		-> folders -> list and read (1)
+			 -> create (1)
+		-> take ownership (1)
+		-> permisos -> leer (1)
+			    -> cambiar (1)
+		-> delete -> (1)
+			-> subfolder and files (1)
+------------------------------------------------------------------------------------------------------
+
+------------------- EJEMPLO CARPETAS --------------------------
+
+A$---------------------- $F.A1
+      L------------------- $F.A2
+           L--------------- $F.A3
+                 I
+                B$%&-------------- %$&F.B1
+                 I             L--------- %$&F.B2
+                 I                  L----- %$&F.B3
+                 I
+                C$%?-------------- $%?F.C1
+                               L--------- $%?F.C2
+                                    L----- $%?F.C3
+
+------------------------------------------------------------------------------------------------------
+
+RECURSO
+
+carpeta ----> ACL's "Access Control List"
+                          L-> ACE1 (array0) (acces control entry)
+                          L-> ACE2 (array1) 
+                          L-> ACE3 (array2)
+	        L-> ... 
+
+          - getAccessRules()
+          - AddAccessRules(New-Object)
+
+ARRAYs Vocals
+
+     0 | 1 | 2 | 3 | 4    	posición
+-------------------------
+     a | e |  i | o | u	contenido
+
+------------------- EJERCICIOS --------------------------
+
+-------------- EJ1 ---------------
+
+Set-Location C:\rubenrf
+# obtenemos información de acceso
+$acl = Get-acl 
+# accedemos a la lista 
+$reglas = $acl.GetAccessRules($true, $true, [System.Security.Principal.NTAccount])
+# la primera regla (entry) de la lista de acceso. OJO que empieza por cero
+$reglas[1]
+# Lista de todos los permisos avanzados que se pueden asignar
+[system.enum]::getnames([System.Security.AccessControl.FileSystemRights])
+# Como crear una regla nueva
+$aceregla7=New-Object System.Security.AccessControl.FileSystemAccessRule("XW10-XX\rubenrf1","Write","Allow")
+# Una vez creada la regla, la añado a la lista inicial de ACLs
+$acl.AddAccessRule($aceregla7)
+# Volvemos a consultar la lista y verificamos que está añadida la regla
+$acl.GetAccessRules($true, $true, [System.Security.Principal.NTAccount])
+# Compruebo si está asociada la nueva regla a la lista accediendo directamente al directorio
+$acl2 = Get-acl
+# La nueva regla no está en esta lista
+$acl2.GetAccessRules($true, $true, [System.Security.Principal.NTAccount])
+# Asociamos la lista modificada con el directorio
+Set-Acl C:\rubenrf $acl
+# Compruebo si está asociada la nueva regla a la lista accediendo directamente al directorio
+$acl2 = Get-acl
+# La nueva regla YA está en esta lista
+$acl2.GetAccessRules($true, $true, [System.Security.Principal.NTAccount])
+
+-------------- EJ2 ---------------
+
+New-LocalUser -Name "rubensrf2" -FullName “Rubén Rey Feal”
+Set-Location C:\rubensrf
+$acl = Get-acl
+$reglas = $acl.GetAccessRules($true, $true, [System.Security.Principal.NTAccount])
+$reglas[1]
+$aceregla7=New-Object System.Security.AccessControl.FileSystemAccessRule("XW10-XX\rubensrf","ReadandExecute","Allow")
+$aceregla8=New-Object System.Security.AccessControl.FileSystemAccessRule("XW10-XX\rubensrf","Write","Deny")
+$acl.AddAccessRule($aceregla7)
+$acl.AddAccessRule($aceregla8)
+$acl.GetAccessRules($true, $true, [System.Security.Principal.NTAccount])
+$acl2 = Get-acl
+$acl2.GetAccessRules($true, $true, [System.Security.Principal.NTAccount])
+Set-Acl C:\rubensrf $acl
+$acl2 = Get-acl
+$acl2.GetAccessRules($true, $true, [System.Security.Principal.NTAccount])
