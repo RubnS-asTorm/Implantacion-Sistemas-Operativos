@@ -1,0 +1,117 @@
+-----------------------------------------------APUNTES FIND----------------------------------------------------
+
+find (RUTA) -> Buscar ficheros
+-maxdepth -(Nº DE DIRECTORIOS) -> Profundizar en los distintos directorios de la ruta
+-iname (NOMBRE.EXTENSIÓN) -> Buscar según el nombre 
+-perm (TABLA PERMISOS) -> Buscar ficheros según los permisos
+-group (SHADOW, DADMIN/ADMINISTRADOR) -> Buscar según el grupo que te pidan 
+-mtime ([+/-]DÍAS) -> Buscar archivos MODIFICADOS más de x días atrás o menos
+-atime ([+/-]DÍAS) -> " " ACCEDIDOS " " " "
+-size +NºTAMAÑO(T,G,M,K,B) -> Buscar archivos según el tamaño
+whereis (NOMBRE) -> Para saber donde está ubicado cierto comando/lo que sea
+
+----------------------------------------------APUNTES GREP----------------------------------------------------
+
+egrep (RUTA) -> Listar lineas
+^"" -> Listar lineas que empiecen por lo que esté dentro de las comillas
+""$ -> Listar lineas que acaben por lo que esté dentro de las comillas
+""/W -> Listar carácteres que no sean alfanuméricos
+".*" -> Cualquier cantidad de carácteres
+| -> Tuberías para enlazar dos comandos
+-w (PALABRA) -> w toma el patrón como una palabra e imprime la linea si aparece*
+-vw (PALABRA) -> " " " " " " " " " " NO " " "
+-o "(PARTE)" | wc -l -> o imprime solamente el patrón cuando aparece en el texto
+-wo "(PALABRA)" | wc -l ->  con wo solamente imprime el patrón de la w**
+grep -e -> Listar con patrones más complejos, es decir, varios patrones
+
+* / ** ( al contar las lineas, en caso de la w cuenta solamente las lineas donde aparezca la palabra, mientras que con la wo cuenta cada vez que aparece el patrón 
+
+--------------------------------------APUNTES EXPRESIONES REGULARES-------------------------------------------
+
+head -(NÚMERO) -> Muestra las X primeras lineas de un archivo
+tail -(NÚMERO) -> Muestra las X últimas lineas de un archivo
+tr [A-ZÁ] [a-zá]-> Cambiar todas las letras de mayúsculas a minúsculas  
+tr -d -> Eliminar
+sort -u -> Ordenar alfabéticamente lineas no repita palabras
+cut -d: -f(1,2,3,4..) -> Muestra solamente las lineas/columnas delimitadas, en este caso están separadas por ":"
+egrep ":(NÚMERO$:..$) -> Depende del delimitador, en este caso son los ":", se usa como filtro
+
+------------------------------------------------APUNTES SED---------------------------------------------------
+
+sed -e 's/(LO QUE VA A SER SUSTITUIDO)/(LO QUE QUIERAS SUSTITUIR)/g' -> Sustituir 
+sed -e '/(LO QUE VA A SER BORRADO)/d/g' -> Borrar
+sed -n -> Muestra solamente las lineas afectadas
+sed /p -> Imprime las lineas afectadas ('/^En/p')
+sed -i -> Realizar cambios in situ
+sed -f -> Scripts
+---------------------------------------------COMANDOS ÚTILES--------------------------------------------------
+
+find  /proc/ -maxdepth 1 -exec ls -l {} \; 2> /dev/null -> En caso de que de error, todos los errores los envia a la "papelera"
+touch -mt (AÑOMESDIAHORA) -> Crear archivos con una fecha específica
+ls -ltr -> Muestra información detallada sobre los archivos, incluyendo permisos, número de enlaces, propietario, grupo, tamaño, fecha de modificación y nombre del archivo.
+	   Ordena la lista por fecha de modificación, con los archivos más recientes primero.
+	   Invierte el orden de la lista, de modo que los archivos más recientes aparecen al final.
+ls -ldh -> Muestra la información en formato de lista larga, proporcionando detalles sobre permisos, número de enlaces, propietario, grupo, tamaño, fecha de modificación y nombre del directorio.
+	   Muestra información sobre el propio directorio en lugar de su contenido.
+           Humaniza el tamaño del directorio, mostrando tamaños legibles para humanos (por ejemplo, KB, MB, GB).
+2> -> Ignorar errores
+---------------------------------------------EJEMPLOS--------------------------------------------------
+
+-w grupo                  I -wo grupo       I -o grupo
+	               I	                       I
+( devuelve )             I ( devuelve )    I  ( devuelve )
+grupo     V               I grupo    V       I  grupo
+grupos   X               I grupos  x        I
+
+sed 1,3d -> Borrar las 3 primeras lineas
+___________________________________¶¶¶¶          
+________________________¶¶¶¶____¶¶¶¶11¶             
+________________________¶¶1¶¶_¶¶¶¶1111¶             
+_______________________¶¶111¶¶¶1111111¶             
+___________________¶¶¶_¶1111¶¶1111111¶              
+___________________¶11¶¶111¶¶111111¶¶               
+___________________¶11¶1111¶111111¶¶                
+__________________¶¶11¶111¶111111¶¶                 
+__________________¶11¶111¶¶111111¶                  
+__________________¶11¶111¶1111111¶                  
+_________________¶11¶111¶11111111¶                  
+_________________¶1¶111¶¶1111111¶¶                  
+________________¶1¶¶111¶1111111¶¶                   
+_______________¶¶1¶111¶1111111¶¶                    
+_______________¶¶¶111¶11111111¶                     
+______________¶¶¶11¶¶111111111¶                     
+______________¶¶11¶¶111111¶¶¶1¶¶                    
+_____________¶11¶¶1111111¶111111¶¶                  
+___________¶¶¶¶¶1111111¶¶11111111¶¶¶                
+__________¶¶¶1111111¶¶1111111111111¶¶¶              
+_________¶¶111111¶¶¶11111111111111111¶¶¶¶           
+_________¶111111¶¶1111111111111111111111¶¶¶         
+_________¶111111¶1111111111¶¶¶1111111111111¶        
+________¶11111111111111111¶¶_¶¶¶¶¶¶¶¶111111¶        
+_______¶¶111111111111111¶¶¶________¶111111¶¶        
+_______¶11111111111¶¶¶¶¶¶__________¶111111¶         
+______¶¶11111111111¶¶_____________¶¶11111¶¶        
+______¶111111111111¶______________¶¶11111¶         
+_____¶¶111111111111¶________________¶¶¶¶¶¶¶¶¶¶¶¶   
+_____¶1111111111111¶________________¶¶¶111111¶¶¶¶  
+_____¶1111111111111¶¶_____________¶¶¶111111¶¶¶11¶  
+____¶¶1111111111111¶¶¶_________¶¶¶1111111¶¶11111¶  
+____¶1111111111111111¶¶¶¶¶¶¶¶¶¶¶111111111¶1111¶¶ 
+____¶111111111111111111¶¶¶¶11111111111111¶¶¶¶¶¶  
+___¶111111111111111111111111111111111111111¶¶¶   
+__¶111111111111111111111111111111111111111¶¶     
+¶¶11111111111111111111111111111111111111¶¶¶      
+111111111111111111111111111111111¶¶¶¶¶¶¶¶        
+111111111111111111111111111111¶¶¶¶               
+1111111111111111111111111111¶¶¶                  
+111111111111111111111111111¶¶                    
+1111111111111111111111111¶¶                      
+111111111111111111111111¶¶                       
+1111111111111111111111¶¶                         
+111111111111111111¶¶¶¶                           
+111111111¶¶¶¶¶¶¶¶¶¶                              
+111111¶¶¶                                        
+¶¶¶¶¶¶¶
+
+
+

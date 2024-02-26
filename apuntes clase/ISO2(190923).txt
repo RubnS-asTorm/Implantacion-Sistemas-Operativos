@@ -1,0 +1,11 @@
+Imos ver un exemplo cun vídeo de 30 segundos gravado a unha resolución 640x480 e 32
+bits de profundidade de cor a 30fps con son en estéreo de 32 bits de calidade con
+frecuencia de 22kHz. Canto ocupa?
+
+640*480*32=9830400bits 1 imaxe
+
+9830400*(30*30)=8847360000bits----->1054,68MiB tamaño imagenes
+
+2(estereo)*32b*22000hz*30s=42240000bits---->5156,25KiB---->5,03MiB
+
+1054,68+5,03=1059,71----> 1,034GiB

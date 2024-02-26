@@ -1,0 +1,14 @@
+APUNTES EXAMEN ISO
+------------------
+find /etc/home/ -maxdepth 2 -group Shadow -o -group dadmin -mtime +3 -exec ls -ltr {}\;
+------------------
+egrep -e "^-" -e "a$" (RUTA)
+egrep "^-.*a$" (RUTA)
+------------------
+egrep -o "\w*[iu]{2}\w*" (RUTA) | egrep -v "qui|gui | sort -u
+------------------
+cut -d: -f1,4 /etc/passwd | egrep “:1001$|:101$”
+------------------
+sed -e '/^<listing>/,/^<\/listing>/{s/\&lt:/</g}' -e ... (RUTA)
+------------------
+awk -F ':' '!/Juan Dorado/{print "Julian Doblado" $2 ":" $3... }

@@ -1,0 +1,39 @@
+
+tabla particiones
+
+
+
+       /¨¨¨¨¨MBR ----> 4-1a5
+      /                     3-1a5 + 1ea+(muchas lógicas)
+1º--{
+      \
+       \___GIPT ---->
+
+
+                                                                            /¨¨¨¨RAID 3 Ü Ü IÜI
+       /¨¨¨¨ volume simple partición [//I¨:¨I¨:¨I  ]             {
+      /----- distribuido [/////I     ]                                   \__RAID 5 IÜI IÜI IÜI
+2º--{                       [//I        ]
+      \----- stripped/raidp/seccionado [/////I     ]
+       \                                           [/////I     ]
+        \                                          [/////I     ]
+         \__ mirror/reflejado  [/////I     ]
+                                      [/////I     ]
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+help
+
+list------> disk
+      L--> partition
+      L--> volume
+select------>disk
+           L--> partition
+           L--> volume
+convert----> dinamic
+           L--> basic
+           L--> quiet
+           L--> mirror
+create------> partition
+           L--> volume
+format
